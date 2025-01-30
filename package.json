@@ -23,8 +23,7 @@
       "name": "menu-bar-timer",
       "title": "Swan Timer - Menu Bar",
       "description": "Shows the current timer in the menu bar",
-      "packageName": "swan",
-      "refreshTime": "1m",
+      "interval": "1m",
       "icon": "extension-icon.png"
     }
   ],
