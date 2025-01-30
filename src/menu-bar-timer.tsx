@@ -11,21 +11,16 @@ interface Timer {
 
 export default function MenuBarTimer() {
   const [timer, setTimer] = useState<Timer | null>(null);
+  const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
     async function loadTimer() {
       const activeTimer = await getActiveTimer();
       setTimer(activeTimer);
+      setIsLoading(false);
     }
 
-    // Initial load
     loadTimer();
-
-    // Set up interval for regular updates
-    const interval = setInterval(loadTimer, 1000);
-
-    // Cleanup interval on unmount
-    return () => clearInterval(interval);
   }, []);
 
   function formatElapsedTime(timer: Timer): string {
@@ -57,7 +52,7 @@ export default function MenuBarTimer() {
   }
 
   if (!timer) {
-    return <MenuBarExtra icon={Icon.Clock} title="No Timer" />;
+    return <MenuBarExtra icon={Icon.Clock} title="No Timer" isLoading={isLoading} />;
   }
 
   const isPaused = timer.pausedAt !== undefined;
@@ -68,6 +63,7 @@ export default function MenuBarTimer() {
     <MenuBarExtra
       icon={Icon.Clock}
       title={title}
+      isLoading={isLoading}
     >
       <MenuBarExtra.Item
         title={timer.taskName}
