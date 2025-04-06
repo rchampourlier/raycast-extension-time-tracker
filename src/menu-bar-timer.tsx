@@ -23,7 +23,7 @@ export default function MenuBarTimer() {
     loadTimer();
   }, []);
 
-  function formatElapsedTime(timer: Timer): string {
+  function formatElapsedTimeForMenubar(timer: Timer): string {
     const now = Date.now();
     let elapsed = now - timer.startTime;
 
@@ -57,7 +57,7 @@ export default function MenuBarTimer() {
 
   const isPaused = timer.pausedAt !== undefined;
   const truncatedName = truncateTaskName(timer.taskName);
-  const title = `${truncatedName} - ${formatElapsedTime(timer)}${isPaused ? " ⏸" : ""}`;
+  const title = `${truncatedName} - ${formatElapsedTimeForMenubar(timer)}${isPaused ? " ⏸" : ""}`;
 
   return (
     <MenuBarExtra

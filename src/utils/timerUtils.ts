@@ -104,3 +104,17 @@ export async function getSessions(): Promise<Session[]> {
   const sessionsStr = await LocalStorage.getItem<string>("sessions");
   return sessionsStr ? JSON.parse(sessionsStr) : [];
 }
+
+export async function exportSessionsToCSV(): Promise<string> {
+  const sessions = await getSessions();
+
+  // Create CSV header
+  const csvHeader = "Task Name,Start Time,End Time,Duration (ms)\n";
+
+  // Convert sessions to CSV rows
+  const csvRows = sessions.map(session =>
+    `"${session.taskName}",${new Date(session.startTime).toISOString()},${new Date(session.endTime).toISOString()},${session.duration}`
+  ).join("\n");
+
+  return csvHeader + csvRows;
+}
