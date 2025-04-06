@@ -118,3 +118,77 @@ export async function exportSessionsToCSV(): Promise<string> {
 
   return csvHeader + csvRows;
 }
+
+export async function stopTimerWithCustomEndTime(endTime: number): Promise<{ success: boolean; taskName?: string; message?: string }> {
+  const timerStr = await LocalStorage.getItem<string>("activeTimer");
+  if (!timerStr) {
+    return { success: false, message: "No active timer found" };
+  }
+
+  const timer: Timer = JSON.parse(timerStr);
+  let duration = endTime - timer.startTime;
+
+  // Subtract total paused time if any
+  if (timer.totalPausedTime) {
+    duration -= timer.totalPausedTime;
+  }
+
+  // If timer was paused, add the final pause duration
+  if (timer.pausedAt) {
+    duration -= (endTime - timer.pausedAt);
+  }
+
+  const session: Session = {
+    taskName: timer.taskName,
+    startTime: timer.startTime,
+    endTime,
+    duration
+  };
+
+  const sessionsStr = await LocalStorage.getItem<string>("sessions");
+  const sessions: Session[] = sessionsStr ? JSON.parse(sessionsStr) : [];
+  sessions.unshift(session);
+  await LocalStorage.setItem("sessions", JSON.stringify(sessions));
+  await LocalStorage.removeItem("activeTimer");
+
+  return { success: true, taskName: timer.taskName };
+}
+
+export async function stopTimerWithAdjustedPausedTime(additionalPausedTime: number): Promise<{ success: boolean; taskName?: string; message?: string }> {
+  const timerStr = await LocalStorage.getItem<string>("activeTimer");
+  if (!timerStr) {
+    return { success: false, message: "No active timer found" };
+  }
+
+  const timer: Timer = JSON.parse(timerStr);
+  const endTime = Date.now();
+  let duration = endTime - timer.startTime;
+
+  // Add the additional paused time to the total paused time
+  timer.totalPausedTime = (timer.totalPausedTime || 0) + additionalPausedTime;
+
+  // Subtract total paused time
+  if (timer.totalPausedTime) {
+    duration -= timer.totalPausedTime;
+  }
+
+  // If timer was paused, add the final pause duration
+  if (timer.pausedAt) {
+    duration -= (endTime - timer.pausedAt);
+  }
+
+  const session: Session = {
+    taskName: timer.taskName,
+    startTime: timer.startTime,
+    endTime,
+    duration
+  };
+
+  const sessionsStr = await LocalStorage.getItem<string>("sessions");
+  const sessions: Session[] = sessionsStr ? JSON.parse(sessionsStr) : [];
+  sessions.unshift(session);
+  await LocalStorage.setItem("sessions", JSON.stringify(sessions));
+  await LocalStorage.removeItem("activeTimer");
+
+  return { success: true, taskName: timer.taskName };
+}

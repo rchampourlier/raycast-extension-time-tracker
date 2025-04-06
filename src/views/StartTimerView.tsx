@@ -1,45 +1,20 @@
-import { Form, ActionPanel, Action } from "@raycast/api";
-import { useState } from "react";
-import { useNavigation } from "@raycast/api";
-import { FormValidation, useForm } from "@raycast/utils";
-import { startTimer } from "../utils/timerUtils";
-import { showToast, Toast } from "@raycast/api";
+import { ActionPanel, Action, Icon, List } from "@raycast/api";
+import { StartTimerFormView } from "./StartTimerFormView";
 
 export function StartTimerView() {
-  const [taskName, setTaskName] = useState("");
-  const { pop } = useNavigation();
-
-  const { handleSubmit } = useForm<{ taskName: string }>({
-    onSubmit(_values) {
-      try {
-        startTimer(taskName.trim());
-        showToast(Toast.Style.Success, "Timer started");
-        pop();
-      } catch (error) {
-        showToast(Toast.Style.Failure, String(error));
-      }
-    },
-    validation: {
-      taskName: FormValidation.Required,
-    },
-  });
-
   return (
-    <Form
+    <List.Item
+      icon={Icon.Play}
+      title="Start New Timer"
       actions={
         <ActionPanel>
-          <Action.SubmitForm title="Start Timer" onSubmit={handleSubmit} />
+          <Action.Push
+            title="Start Timer"
+            target={<StartTimerFormView />}
+            icon={Icon.Play}
+          />
         </ActionPanel>
       }
-    >
-      <Form.TextField
-        id="taskName"
-        title="Task Name"
-        placeholder="Enter task name"
-        value={taskName}
-        onChange={setTaskName}
-        autoFocus
-      />
-    </Form>
+    />
   );
-} 
+}
