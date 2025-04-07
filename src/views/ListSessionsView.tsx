@@ -6,6 +6,7 @@ import { writeFile } from "node:fs/promises";
 import { join } from "node:path";
 import { environment } from "@raycast/api";
 import type { Session } from "../types";
+import { SessionDetailsView } from "./SessionDetailsView";
 
 export function ListSessionsView() {
   const [sessions, setSessions] = useState<Session[]>([]);
@@ -57,14 +58,24 @@ export function ListSessionsView() {
           ]}
           actions={
             <ActionPanel>
-              <Action
-                title="Restart Timer"
-                icon={Icon.Repeat}
-                onAction={async () => {
-                  await startTimer(session.taskName);
-                  showToast(Toast.Style.Success, `Started timer for "${session.taskName}"`);
-                }}
-              />
+              <ActionPanel.Section>
+                <Action
+                  title="Restart Timer"
+                  icon={Icon.Repeat}
+                  onAction={async () => {
+                    await startTimer(session.taskName);
+                    showToast(Toast.Style.Success, `Started timer for "${session.taskName}"`);
+                  }}
+                />
+              </ActionPanel.Section>
+              <ActionPanel.Section>
+                <Action.Push
+                  title="Show Details"
+                  icon={Icon.Info}
+                  target={<SessionDetailsView session={session} />}
+                  shortcut={{ modifiers: ["cmd"], key: "." }}
+                />
+              </ActionPanel.Section>
             </ActionPanel>
           }
         />

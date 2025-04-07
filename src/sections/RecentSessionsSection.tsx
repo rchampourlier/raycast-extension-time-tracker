@@ -2,6 +2,7 @@ import { List, ActionPanel, Action, Icon } from "@raycast/api";
 import type { Session, Timer } from "../types";
 import { startTimer, getActiveTimer } from "../utils/timerUtils";
 import { formatDuration } from "../utils/formatUtils";
+import { SessionDetailsView } from "../views/SessionDetailsView";
 
 interface RecentSessionsSectionProps {
   sessions: Session[];
@@ -25,15 +26,25 @@ export function RecentSessionsSection({
           ]}
           actions={
             <ActionPanel>
-              <Action
-                title="Restart Timer"
-                icon={Icon.Repeat}
-                onAction={async () => {
-                  await startTimer(session.taskName);
-                  const newTimer = await getActiveTimer();
-                  setActiveTimer(newTimer);
-                }}
-              />
+              <ActionPanel.Section>
+                <Action
+                  title="Restart Timer"
+                  icon={Icon.Repeat}
+                  onAction={async () => {
+                    await startTimer(session.taskName);
+                    const newTimer = await getActiveTimer();
+                    setActiveTimer(newTimer);
+                  }}
+                />
+              </ActionPanel.Section>
+              <ActionPanel.Section>
+                <Action.Push
+                  title="Show Details"
+                  icon={Icon.Info}
+                  target={<SessionDetailsView session={session} />}
+                  shortcut={{ modifiers: ["cmd"], key: "." }}
+                />
+              </ActionPanel.Section>
             </ActionPanel>
           }
         />
