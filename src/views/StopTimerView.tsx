@@ -27,16 +27,16 @@ export function StopTimerView({ activeTimer, setActiveTimer }: { activeTimer: Ti
             }}
           />
           <Action.Push
-            title="Stop with Custom End Time"
+            title="Stop: Override End Time"
             target={<CustomEndTimeView />}
             icon={Icon.Clock}
             shortcut={{ modifiers: ["cmd"], key: "t" }}
           />
           <Action.Push
-            title="Stop with Adjusted Paused Time"
+            title="Stop: Add Paused Time"
             target={<AdjustPausedTimeView />}
             icon={Icon.Pause}
-            shortcut={{ modifiers: ["cmd"], key: "p" }}
+            shortcut={{ modifiers: ["cmd", "shift"], key: "p" }}
           />
         </ActionPanel>
       }
